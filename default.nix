@@ -1,5 +1,5 @@
 {
-  nixpkgs ? (fetchTarball https://github.com/CohenCyril/nixpkgs/archive/f4de4462e8d6e38364c7080519ce977742cb5f06.tar.gz),
+  nixpkgs ? (fetchTarball https://github.com/CohenCyril/nixpkgs/archive/387097dd56bd7ab0514c476f9aa62bc15455aae5.tar.gz),
   coq-version ? "8.10",
   mc-version ? "1.11.0+beta1",
   withEmacs ? false,
