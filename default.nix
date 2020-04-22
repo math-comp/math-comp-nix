@@ -1,0 +1,57 @@
+{
+  nixpkgs ? (fetchTarball https://github.com/CohenCyril/nixpkgs/archive/f4de4462e8d6e38364c7080519ce977742cb5f06.tar.gz),
+  coq-version ? "8.10",
+  mc-version ? "1.11.0+beta1",
+  withEmacs ? false,
+  print-env ? false,
+  config ? pkgs: coqPackages: with coqPackages; {
+    propagatedBuildInputs = [ mathcomp mathcomp-extra-fast ];
+  },
+  name ? (config {} {}).name or "env",
+  src ? (config {} {}).src or ./.,
+}:
+let
+  pkgs = import nixpkgs {
+    config.packageOverrides = pkgs: with pkgs; {
+      coqPackages = {
+        "8.7" = coqPackages_8_7;
+        "8.8" = coqPackages_8_8;
+        "8.9" = coqPackages_8_9;
+        "8.10" = coqPackages_8_10;
+        "8.11" = coqPackages_8_11;
+      }.${coq-version}.overrideScope'
+        (self: super: {
+          mathcomp-extra-config = lib.recursiveUpdate super.mathcomp-extra-config {
+            for-package = { ${name} = version:
+              lib.recursiveUpdate ((super.mathcomp-extra-config.for-package.${name}
+                or (version: {})) version) (config pkgs self); }; };
+          mathcomp = self.mathcomp_ mc-version;
+        });
+    };
+  };
+
+  current-config = config pkgs pkgs.coqPackages;
+
+  shellHook = ''
+    nixEnv () {
+      echo "Here is your work environement:"
+      for x in $propagatedBuildInputs; do printf "  "; echo $x | cut -d "-" -f "2-"; done
+      echo "you can pass option '--argstr coq-version \"x.y\"' to nix-shell to change coq versions"
+      echo "you can pass option '--argstr mc-version \"x.y.z\"' to nix-shell to change mathcomp versions"
+    }
+    cachixEnv () {
+      echo "Pushing environement to cachix"
+      for x in $propagatedBuildInputs; do printf "  "; echo $x | cachix push math-comp; done
+    }
+  ''
+  + pkgs.lib.optionalString print-env "nixEnv";
+
+  emacs = with pkgs; emacsWithPackages
+    (epkgs: with epkgs.melpaStablePackages; [proof-general]);
+
+  package = with pkgs; (coqPackages.mathcomp-extra name src);
+in
+if pkgs.lib.trivial.inNixShell then package.overrideAttrs (old: {
+  inherit shellHook;
+  buildInputs = (old.buildInputs or []) ++ pkgs.lib.optional withEmacs emacs;
+}) else package
