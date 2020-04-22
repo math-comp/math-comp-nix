@@ -4,10 +4,8 @@
   mc-version ? "1.11.0+beta1",
   withEmacs ? false,
   print-env ? false,
-  config ? pkgs: coqPackages: with coqPackages; {
-    propagatedBuildInputs = [ mathcomp mathcomp-extra-fast ];
-  },
-  name ? (config {} {}).name or "env",
+  config ? pkgs: coqPackages: {},
+  name ? (config {} {}).name or "mathcomp-fast",
   src ? (config {} {}).src or ./.,
 }:
 let
@@ -20,17 +18,33 @@ let
         "8.10" = coqPackages_8_10;
         "8.11" = coqPackages_8_11;
       }.${coq-version}.overrideScope'
-        (self: super: {
-          mathcomp-extra-config = lib.recursiveUpdate super.mathcomp-extra-config {
-            for-package = { ${name} = version:
-              lib.recursiveUpdate ((super.mathcomp-extra-config.for-package.${name}
-                or (version: {})) version) (config pkgs self); }; };
-          mathcomp = self.mathcomp_ mc-version;
-        });
+        (self: super:
+          let mathcomp-full-config = lib.recursiveUpdate super.mathcomp-extra-config {
+                for-package = {
+                  mathcomp-fast = version: {
+                    propagatedBuildInputs = with self; ([ mathcomp ] ++ mathcomp-extra-fast);
+                  };
+                  mathcomp-full = version: {
+                    propagatedBuildInputs = with self; ([ mathcomp ] ++ mathcomp-extra-all);
+                  };
+                };
+              };
+          in {
+            mathcomp-extra-config = lib.recursiveUpdate mathcomp-full-config {
+              for-package = {
+                ${name} = version:
+                  lib.recursiveUpdate ((mathcomp-full-config.for-package.${name}
+                    or (version: {})) version) (config pkgs self);
+              };
+            };
+            mathcomp = self.mathcomp_ mc-version;
+          });
     };
   };
 
   current-config = config pkgs pkgs.coqPackages;
+
+  mathcompnix = ./.;
 
   shellHook = ''
     nixEnv () {
@@ -43,6 +57,9 @@ let
       echo "Pushing environement to cachix"
       for x in $propagatedBuildInputs; do printf "  "; echo $x | cachix push math-comp; done
     }
+    nixDefault () {
+      cat $mathcompnix/default.nix
+    }
   ''
   + pkgs.lib.optionalString print-env "nixEnv";
 
@@ -52,6 +69,6 @@ let
   package = with pkgs; (coqPackages.mathcomp-extra name src);
 in
 if pkgs.lib.trivial.inNixShell then package.overrideAttrs (old: {
-  inherit shellHook;
+  inherit shellHook mathcompnix;
   buildInputs = (old.buildInputs or []) ++ pkgs.lib.optional withEmacs emacs;
 }) else package
