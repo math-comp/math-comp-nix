@@ -8,7 +8,7 @@
 }:
 with builtins;
 let
-  cfg-fun = if isAttrs config then (_: config) else config;
+  cfg-fun = if isFunction config then config else (_: config);
   pkgs = import nixpkgs {
     config.packageOverrides = pkgs: with pkgs.lib; {
       coqPackages = with pkgs; {
