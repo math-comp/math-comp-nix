@@ -1,5 +1,5 @@
 {
-  nixpkgs ? (fetchTarball https://github.com/CohenCyril/nixpkgs/archive/d53b12e0fc3b8941dfcf28e097600aec3b7b5c0e.tar.gz),
+  nixpkgs ? (fetchTarball https://github.com/CohenCyril/nixpkgs/archive/mathcomp-1.11.tar.gz),
   coq-version ? "8.10",
   mc-version ? "1.11.0+beta1",
   withEmacs ? false,
