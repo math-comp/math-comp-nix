@@ -4,11 +4,12 @@
   withEmacs ? false,
   print-env ? false,
   package ? "mathcomp-fast",
-  src ? (config.${package}.version or ./.),
+  src ? config.${package} or ./.,
 }:
 with builtins;
 let
-  cfg-fun = if isFunction config then config else (_: config);
+  pre-cfg-fun = if isAttrs config then (_: config) else config;
+  cfg-fun = version: pre-cfg-fun version // { ${package} = src; };
   pkgs = import nixpkgs {
     config.packageOverrides = pkgs: with pkgs.lib; {
       coqPackages = with pkgs; {
@@ -35,8 +36,8 @@ let
           in {
             mathcomp-extra-config = lib.recursiveUpdate mathcomp-full-config {
               for-package = mapAttrs
-                (name: value: version: recursiveUpdate (value version) cfg)
-                (filterAttrs (name: _: !elem name [ "mathcomp" ]) cfg);
+                (name: value: version: super.mathcomp-extra-override name cfg.${name} (value version))
+                cfg;
             };
             mathcomp = if cfg?mathcomp then self.mathcomp_ cfg.mathcomp else super.mathcomp;
           });
@@ -68,12 +69,7 @@ let
   emacs = with pkgs; emacsWithPackages
     (epkgs: with epkgs.melpaStablePackages; [proof-general]);
 
-  pkg = with pkgs;
-    if elem package
-      [ "mathcomp" "ssreflect" "mathcomp-ssreflect" "mathcomp-fingroup"
-        "mathcomp-algebra" "mathcomp-solvable" "mathcomp-field" "mathcomp-character" ]
-    then coqPackages.${package}
-    else (coqPackages.mathcomp-extra package src);
+  pkg = with pkgs; coqPackages.${package} or (coqPackages.mathcomp-extra package src);
 in
 if pkgs.lib.trivial.inNixShell then pkg.overrideAttrs (old: {
   inherit shellHook mathcompnix;
