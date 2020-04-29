@@ -86,7 +86,9 @@ let
   emacs = with pkgs; emacsWithPackages
     (epkgs: with epkgs.melpaStablePackages; [proof-general]);
 
-  pkg = with pkgs; coqPackages.${package} or (coqPackages.current-mathcomp-extra package);
+  pkg = with pkgs;
+        if package == "mathcomp.single" then coqPackages.mathcomp.single
+        else coqPackages.${package} or (coqPackages.current-mathcomp-extra package);
 in
 if pkgs.lib.trivial.inNixShell then pkg.overrideAttrs (old: {
   inherit shellHook mathcompnix;
