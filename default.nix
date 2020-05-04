@@ -32,10 +32,16 @@ let
               };
             } // (cfg-fun all-pkgs);
           in {
-            # mathcomp-extra-config = lib.recursiveUpdate super.mathcomp-extra-config {
-            #   for-coq-and-mc.${self.coq.coq-version}.${self.mathcomp.version} =
-            #     removeAttrs cfg ["mathcomp" "coq"];
-            # };
+            mathcomp-extra-config = lib.recursiveUpdate super.mathcomp-extra-config {
+              initial = {
+                # fixing mathcomp analysis to depend on real-closed
+                mathcomp-analysis = version:
+                  let mca = super.mathcomp-extra-config.initial.mathcomp-analysis version; in
+                  if elem version ["master" "cauchy_etoile"]
+                  then mca // { propagatedBuildInputs = mca.propagatedBuildInputs ++ [self.mathcomp-real-closed]; }
+                  else mca;
+              };
+            };
             mathcomp = if cfg?mathcomp then self.mathcomp_ cfg.mathcomp else super.mathcomp;
           } // mapAttrs
             (package: version: coqPackages.mathcomp-extra package version)
