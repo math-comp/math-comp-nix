@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: cachix/install-nix-action@v8
       - uses: cachix/cachix-action@v6
-          with:
+        with:
           # Name of a cachix cache to push and pull/substitute
           name:  math-comp
           # Authentication token for Cachix, needed only for private cache access
