@@ -1,0 +1,31 @@
+name: Cachix
+on:
+  push:
+jobs:
+  cachix:
+    name: Cachix branch
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mc: [ "1.11.0+beta1", "1.10.0", "1.9.0", "1.8.0" ]
+        coq: [ "8.11", "8.10", "8.9", "8.8", "8.7" ]
+        exclude:
+          - mc: "1.8.0"
+            coq: "8.10"
+          - mc: "1.8.0"
+            coq: "8.11"
+          - mc: "1.9.0"
+            coq: "8.11"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.1.1
+      - uses: cachix/install-nix-action@v8
+      - uses: cachix/cachix-action@v6
+        with:
+          # Name of a cachix cache to push and pull/substitute
+          name:  math-comp
+          # Authentication token for Cachix, needed only for private cache access
+          signingKey: '${{ secrets.CACHIX_SIGNING_KEY }}'
+      # building fake mathcomp-fast target
+      - run: nix-build --arg config '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
