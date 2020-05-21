@@ -8,7 +8,7 @@
 with builtins;
 let
   cfg-fun = if isFunction config then config else (pkgs: config);
-  pkgs = import nixpkgs {
+  pkgs = if isAttrs nixpkgs then nixpkgs else import nixpkgs {
     overlays = [ (pkgs: super-pkgs: with pkgs.lib;
       let coqPackages = with pkgs; {
         "8.7" = coqPackages_8_7;
@@ -21,7 +21,7 @@ let
         (self: super:
           let
             all-pkgs = pkgs // { coqPackages = self; };
-            cfg = { ${package} = ./.; } // {
+            cfg = { ${if package == "mathcomp.single" then "mathcomp" else package} = ./.; } // {
               mathcomp-fast = {
                 src = ./.;
                 propagatedBuildInputs = with self; ([ mathcomp ] ++ mathcomp-extra-fast);
@@ -37,7 +37,7 @@ let
                 # fixing mathcomp analysis to depend on real-closed
                 mathcomp-analysis = version:
                   let mca = super.mathcomp-extra-config.initial.mathcomp-analysis version; in
-                  if elem version ["master" "cauchy_etoile"]
+                  if elem version [ "master" "cauchy_etoile" "holomorphy" ]
                   then mca // { propagatedBuildInputs = mca.propagatedBuildInputs ++ [self.mathcomp-real-closed]; }
                   else mca;
               };
@@ -54,13 +54,11 @@ let
             src = cleanSourceWith {
               src = cleanSource src;
               filter = path: type: let baseName = baseNameOf (toString path); in ! (
-                # Filter out editor backup / swap files.
-                hasPrefix ".git" baseName ||
                 hasSuffix ".aux" baseName ||
                 hasSuffix ".d" baseName ||
                 hasSuffix ".vo" baseName ||
                 hasSuffix ".glob" baseName ||
-                elem baseName ["Makefile.coq" "Makefile.coq.conf" ".mailmap"]
+                elem baseName ["Makefile.coq" "Makefile.coq.conf" ".mailmap" ".git"]
               );
             };
           };
