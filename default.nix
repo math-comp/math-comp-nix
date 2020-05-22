@@ -1,5 +1,5 @@
 {
-  nixpkgs ? (fetchTarball https://github.com/CohenCyril/nixpkgs/archive/mathcomp-1.11.tar.gz),
+  nixpkgs ? (fetchTarball https://github.com/CohenCyril/nixpkgs/archive/mathcomp-fix.tar.gz),
   config ? (pkgs: {}),
   withEmacs ? false,
   print-env ? false,
