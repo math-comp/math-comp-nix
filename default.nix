@@ -1,6 +1,6 @@
 {
   nixpkgs ? (if builtins.pathExists ./nixpkgs.nix then import ./nixpkgs.nix
-             else fetchTarball https://github.com/CohenCyril/nixpkgs/archive/mathcomp-fix-rec.tar.gz),
+             else fetchTarball https://github.com/CohenCyril/nixpkgs/archive/mathcomp-1.11fix.tar.gz),
   config ? (if builtins.pathExists ./config.nix then import ./config.nix else {}),
   withEmacs ? false,
   print-env ? false,
@@ -39,17 +39,6 @@ let
             mathcomp-extra-config =
               let mec = super-coqPackages.mathcomp-extra-config; in
               lib.recursiveUpdate mec {
-                initial = {
-                  # fixing mathcomp analysis to depend on real-closed
-                  mathcomp-analysis = {version, coqPackages} @ args:
-                    let mca = mec.initial.mathcomp-analysis args; in
-                    mca // (
-                      if elem version [ "master" "cauchy_etoile" "holomorphy" ]
-                      then {
-                        propagatedBuildInputs = mca.propagatedBuildInputs ++
-                                                [coqPackages.mathcomp-real-closed];
-                      } else {});
-                };
                 for-coq-and-mc.${coqPackages.coq.coq-version}.${coqPackages.mathcomp.version} =
                   (super-coqPackages.mathcomp-extra-config.${coqPackages.coq.coq-version}.${coqPackages.mathcomp.version} or {}) //
                   (removeAttrs cfg [ "mathcomp" "coq" "mathcomp-fast" "mathcomp-full" ]);
