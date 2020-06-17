@@ -1,6 +1,6 @@
 {
   nixpkgs ? (if builtins.pathExists ./nixpkgs.nix then import ./nixpkgs.nix
-             else fetchTarball https://github.com/CohenCyril/nixpkgs/archive/mathcomp-1.11fix.tar.gz),
+             else fetchTarball https://github.com/vbgl/nixpkgs/archive/coq-8.12+β1.tar.gz),
   config ? (if builtins.pathExists ./config.nix then import ./config.nix else {}),
   withEmacs ? false,
   print-env ? false,
@@ -20,6 +20,7 @@ let
         "8.9" = coqPackages_8_9;
         "8.10" = coqPackages_8_10;
         "8.11" = coqPackages_8_11;
+        "8.12" = coqPackages_8_12;
         "default" = coqPackages_8_10;
       }.${(cfg-fun pkgs).coq or "default"}.overrideScope'
         (coqPackages: super-coqPackages:
