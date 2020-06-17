@@ -1,6 +1,6 @@
 {
   nixpkgs ? (if builtins.pathExists ./nixpkgs.nix then import ./nixpkgs.nix
-             else fetchTarball https://github.com/vbgl/nixpkgs/archive/coq-8.12+β1.tar.gz),
+             else fetchTarball https://github.com/vbgl/nixpkgs/archive/21260f5.tar.gz),
   config ? (if builtins.pathExists ./config.nix then import ./config.nix else {}),
   withEmacs ? false,
   print-env ? false,
