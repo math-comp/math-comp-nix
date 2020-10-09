@@ -1,6 +1,6 @@
 {
   nixpkgs ? (if builtins.pathExists ./nixpkgs.nix then import ./nixpkgs.nix
-             else fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/72b9660dc18ba347f7cd41a9504fc181a6d87dc3.tar.gz),
+             else fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/502845c3e31ef3de0e424f3fcb09217df2ce6df6.tar.gz),
   config ? (if builtins.pathExists ./config.nix then import ./config.nix else {}),
   withEmacs ? false,
   print-env ? false,
@@ -41,6 +41,15 @@ let
             mathcomp-extra-config =
               let mec = super-coqPackages.mathcomp-extra-config; in
               lib.recursiveUpdate mec {
+                initial = {
+                  # fixing mathcomp analysis to depend on real-closed
+                  mathcomp-analysis = {version, coqPackages} @ args:
+                    let mca = mec.initial.mathcomp-analysis args; in
+                    mca // {
+                      propagatedBuildInputs = mca.propagatedBuildInputs ++
+                                              (if builtins.elem coq.version ["8.10" "8.11" "8.12"] then (with coqPackages; [ coq-elpi hierarchy-builder ]) else []);
+                    };
+                };
                 for-coq-and-mc.${coqPackages.coq.coq-version}.${coqPackages.mathcomp.version} =
                   (super-coqPackages.mathcomp-extra-config.${coqPackages.coq.coq-version}.${coqPackages.mathcomp.version} or {}) //
                   (removeAttrs cfg [ "mathcomp" "coq" "mathcomp-fast" "mathcomp-full" ]);
