@@ -47,7 +47,7 @@ let
                     let mca = mec.initial.mathcomp-analysis args; in
                     mca // {
                       propagatedBuildInputs = mca.propagatedBuildInputs ++
-                                              if builtins.elem coq.version ["8.10" "8.11"] then (with coqPackages; [ coq-elpi hierarchy-builder ]) else [];
+                                              (if builtins.elem coq.version ["8.10" "8.11"] then (with coqPackages; [ coq-elpi hierarchy-builder ]) else []);
                     };
                 };
                 for-coq-and-mc.${coqPackages.coq.coq-version}.${coqPackages.mathcomp.version} =
