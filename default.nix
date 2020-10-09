@@ -1,6 +1,6 @@
 {
   nixpkgs ? (if builtins.pathExists ./nixpkgs.nix then import ./nixpkgs.nix
-             else fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/72b9660dc18ba347f7cd41a9504fc181a6d87dc3.tar.gz),
+             else fetchTarball https://github.com/NixOS/nixpkgs-channels/archive/502845c3e31ef3de0e424f3fcb09217df2ce6df6.tar.gz),
   config ? (if builtins.pathExists ./config.nix then import ./config.nix else {}),
   withEmacs ? false,
   print-env ? false,
