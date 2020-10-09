@@ -47,7 +47,7 @@ let
                     let mca = mec.initial.mathcomp-analysis args; in
                     mca // {
                       propagatedBuildInputs = mca.propagatedBuildInputs ++
-                                              (with coqPackages; [ coq-elpi hiearchy-builder ]);
+                                              (with coqPackages; [ coq-elpi hierarchy-builder ]);
                     };
                 };
                 for-coq-and-mc.${coqPackages.coq.coq-version}.${coqPackages.mathcomp.version} =
