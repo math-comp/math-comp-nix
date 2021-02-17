@@ -31,6 +31,7 @@ jobs:
         with:
           # Name of a cachix cache to push and pull/substitute
           name:  math-comp
+          extraPullNames: coq
           # Authentication token for Cachix, needed only for private cache access
           signingKey: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
