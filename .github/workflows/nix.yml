@@ -33,6 +33,6 @@ jobs:
           name:  math-comp
           extraPullNames: coq
           # Authentication token for Cachix, needed only for private cache access
-          signingKey: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
       - run: nix-build --arg config '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
