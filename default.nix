@@ -6,7 +6,8 @@
 }@args:
 let src = fetchGit {
   url = "https://github.com/coq-community/nix-toolbox.git";
-  ref = "8b8ed7f4fc38ae218d99fe9909142b30e6a0733f";
+  ref = "master";
+  rev = "8b8ed7f4fc38ae218d99fe9909142b30e6a0733f";
 };
 in
 (import src ./.
