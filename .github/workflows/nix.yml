@@ -1,6 +1,9 @@
 name: Cachix
 on:
-  push:
+  pull_request:
+    branches:
+      - master
+      - v2
 jobs:
   cachix:
     name: Cachix branch
@@ -54,4 +57,24 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
       - run: nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-            
+      - id: set-nixenv
+        run: >
+          content=$(nix-shell
+          --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+          --run printNixEnv)
+
+          # Escaping a few characters, otherwise set-output ignores them
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+
+          echo ::set-output name=result::content
+      - uses: mshick/add-pr-comment@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            \## coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}**
+
+            ```
+            ${{ steps.set-nixenv.outputs.result }}
+            ```
