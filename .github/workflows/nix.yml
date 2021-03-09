@@ -8,21 +8,39 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mc: [ "1.11.0", "1.10.0", "1.9.0", "1.8.0" ]
-        coq: [ "8.12", "8.11", "8.10", "8.9", "8.8", "8.7" ]
+        mc: [ "1.12.0", "1.11.0", "1.10.0", "1.9.0", "1.8.0" ]
+        coq: [ "8.13", "8.12", "8.11", "8.10", "8.9", "8.8", "8.7" ]
         exclude:
           - mc: "1.8.0"
             coq: "8.10"
           - mc: "1.8.0"
             coq: "8.11"
-          - mc: "1.9.0"
-            coq: "8.11"
           - mc: "1.8.0"
             coq: "8.12"
+          - mc: "1.8.0"
+            coq: "8.13"
+
+          - mc: "1.9.0"
+            coq: "8.11"
           - mc: "1.9.0"
             coq: "8.12"
+          - mc: "1.9.0"
+            coq: "8.13"
+
           - mc: "1.10.0"
             coq: "8.12"
+          - mc: "1.10.0"
+            coq: "8.13"
+
+          - mc: "1.11.0"
+            coq: "8.13"
+
+          - mc: "1.12.0"
+            coq: "8.7"
+          - mc: "1.12.0"
+            coq: "8.8"
+          - mc: "1.12.0"
+            coq: "8.9"
     steps:
       - name: Checkout
         uses: actions/checkout@v2.1.1
@@ -35,4 +53,5 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
-      - run: nix-build --arg config '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+      - run: nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+            
