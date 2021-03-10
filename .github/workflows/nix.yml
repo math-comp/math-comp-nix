@@ -68,7 +68,7 @@ jobs:
       #     --run printNixEnv)
 
       #     echo ::set-output name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$nixenv
-     - id: set-nixenv
+      - id: set-nixenv
         run: >
           nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
 
