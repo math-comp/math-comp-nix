@@ -61,10 +61,14 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
       - id: nixenv
-          # nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
         run: >
-          nix-shell --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-          --run "echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)"
+          nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+
+          nixenv=$(nix-shell
+          --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+          --run printNixEnv)
+
+          echo ::set-output name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$nixenv
       # - id: nixenv
       #   run: |
       #     # echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)
