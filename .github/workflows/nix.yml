@@ -78,7 +78,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
             **coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}**
-            ${{ steps.nixenv.outputs.result }}
+            ${{ steps.nixenv.outputs }} }}
 
 
   # summary:
