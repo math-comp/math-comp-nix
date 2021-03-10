@@ -1,6 +1,9 @@
 name: Cachix
 on:
-  push:
+  pull_request:
+    branches:
+      - master
+      - v2
 jobs:
   cachix:
     name: Cachix branch
