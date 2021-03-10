@@ -47,7 +47,7 @@ jobs:
     outputs:
       nixenv:
         description: "Nix Environement"
-        value: ${{ steps.nixenv.outputs.coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }} }}
+        value: ${{ steps.set-nixenv.outputs.coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }} }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.1.1
@@ -60,7 +60,7 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
-      - id: nixenv
+      - id: set-nixenv
         run: >
           nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
 
