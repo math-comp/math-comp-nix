@@ -54,3 +54,8 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
       - run: nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+      - uses: mshick/add-pr-comment@v1
+        with:
+          message: |
+            **coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}"**
+            
