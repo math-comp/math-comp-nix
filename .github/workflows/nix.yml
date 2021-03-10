@@ -75,5 +75,5 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
-            ${{ cachix.outputs.nixenv }}
+            ${{ needs.cachix.outputs.nixenv }}
             
