@@ -59,6 +59,7 @@ jobs:
       - run: nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
       - uses: mshick/add-pr-comment@v1
         with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
             **coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}"**
             
