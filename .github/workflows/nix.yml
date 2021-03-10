@@ -47,7 +47,7 @@ jobs:
     outputs:
       nixenv:
         description: "Nix Environement"
-        value: ${{steps.nixenv.outputs.nixenv}}
+        value: ${{ steps.nixenv.outputs.coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }} }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.1.1
@@ -65,7 +65,7 @@ jobs:
           nix-shell --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
       - id: nixenv
         run: |
-          echo ::set-env name=nixenv.coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)
+          echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)
   summary:
     name: Summary
     runs-on: ubuntu-latest
@@ -75,5 +75,5 @@ jobs:
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
-            ${{ needs.cachix.outputs.nixenv }}
+            ${{ needs.cachix.outputs }}
             
