@@ -60,13 +60,15 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
-      - run: |
-          nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-          nix-shell --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
       - id: nixenv
         run: |
-          # echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)
-           echo ::set-env name=result::$(printNixEnv)
+          # nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+          nix-shell --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}' \
+            run "echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)"
+      # - id: nixenv
+      #   run: |
+      #     # echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)
+      #      echo ::set-env name=result::$(printNixEnv)
       - uses: mshick/add-pr-comment@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
