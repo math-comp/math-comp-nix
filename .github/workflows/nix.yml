@@ -64,7 +64,7 @@ jobs:
           # nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
         run: >
           nix-shell --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-          run "echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)"
+          --run "echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)"
       # - id: nixenv
       #   run: |
       #     # echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)
