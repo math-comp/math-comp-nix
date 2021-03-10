@@ -44,8 +44,9 @@ jobs:
             coq: "8.8"
           - mc: "1.12.0"
             coq: "8.9"
-    outputs:
-      nixenv: ${{ steps.set-nixenv.outputs }}
+    # does not work
+    # outputs:
+    #   nixenv: ${{ steps.set-nixenv.outputs.coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }} }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.1.1
@@ -58,7 +59,16 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
-      - id: set-nixenv
+      # - id: set-nixenv
+      #   run: >
+      #     nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+
+      #     nixenv=$(nix-shell
+      #     --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+      #     --run printNixEnv)
+
+      #     echo ::set-output name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$nixenv
+     - id: set-nixenv
         run: >
           nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
 
@@ -66,17 +76,13 @@ jobs:
           --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
           --run printNixEnv)
 
-          echo ::set-output name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$nixenv
-      # - id: nixenv
-      #   run: |
-      #     # echo ::set-env name=coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}::$(printNixEnv)
-      #      echo ::set-env name=result::$(printNixEnv)
-      # - uses: mshick/add-pr-comment@v1
-      #   with:
-      #     repo-token: ${{ secrets.GITHUB_TOKEN }}
-      #     message: |
-      #       **coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}**
-      #       ${{ toJSON(steps.nixenv.outputs) }} }}
+          echo ::set-output name=result::$nixenv
+      - uses: mshick/add-pr-comment@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            **coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}**
+            ${{ steps.set-nixenv.outputs.result }}
 
 
   summary:
