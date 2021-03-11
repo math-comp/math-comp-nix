@@ -72,7 +72,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       ## does not work because the PR is updated only once
       - name: Cache install Nix packages
-        uses: rikhuijzer/cache-install@v1
+        uses: rikhuijzer/cache-install@v1.0.7
         with:
           key: nix-${{ hashFiles('default.nix') }}
       - name: Update README.md
