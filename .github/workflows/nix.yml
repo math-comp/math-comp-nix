@@ -5,84 +5,76 @@ on:
       - master
       - v2
 jobs:
-  cachix:
-    name: Cachix branch
+  setup:
+    name: Computing matrix of tested versions
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+    - name: Setup build matrix
+      id: set-matrix
+      run: "echo ::set-output name=matrix::$(./ci-matrix)"
+
+  builds:
+    name: Build mathcomp and coq combination
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        mc: [ "1.12.0", "1.11.0", "1.10.0", "1.9.0", "1.8.0" ]
-        coq: [ "8.13", "8.12", "8.11", "8.10", "8.9", "8.8", "8.7" ]
-        exclude:
-          - mc: "1.8.0"
-            coq: "8.10"
-          - mc: "1.8.0"
-            coq: "8.11"
-          - mc: "1.8.0"
-            coq: "8.12"
-          - mc: "1.8.0"
-            coq: "8.13"
-
-          - mc: "1.9.0"
-            coq: "8.11"
-          - mc: "1.9.0"
-            coq: "8.12"
-          - mc: "1.9.0"
-            coq: "8.13"
-
-          - mc: "1.10.0"
-            coq: "8.12"
-          - mc: "1.10.0"
-            coq: "8.13"
-
-          - mc: "1.11.0"
-            coq: "8.13"
-
-          - mc: "1.12.0"
-            coq: "8.7"
-          - mc: "1.12.0"
-            coq: "8.8"
-          - mc: "1.12.0"
-            coq: "8.9"
+      matrix: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
       - name: Checkout
         uses: actions/checkout@v2.1.1
-      # - uses: cachix/install-nix-action@v12
-      # - uses: cachix/cachix-action@v8
-      #   with:
-      #     # Name of a cachix cache to push and pull/substitute
-      #     name:  math-comp
-      #     extraPullNames: coq
-      #     # Authentication token for Cachix, needed only for private cache access
-      #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      # building fake mathcomp-fast target
-      - run: echo '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-      # - run: nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-      # - id: set-nixenv
-      #   run: >
-      #     content=$(nix-shell
-      #     --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-      #     --run ppNixEnv)
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          # Name of a cachix cache to push and pull/substitute
+          name:  math-comp
+          extraPullNames: coq
+          # Authentication token for Cachix, needed only for private cache access
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      - name: Building mathcomp-full-shell target
+        run: |
+          overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\"}"
+          storepath=$(nix eval "(\"\${import ./. {override = $overrides;}}\")")
+          hash=$(echo $storepath | sed "s/\"//mg" | xargs basename | cut -d- -f1)
+          url=https://math-comp.cachix.org/$hash.narinfo
+          if curl --output /dev/null --silent --head --fail "$url"; then
+            echo "In cache: $url, doing nothing"
+          else
+            echo "Not in cache, compiling"
+            nix-build --arg override "$overrides"
+          fi
 
-      #     # Escaping a few characters, otherwise set-output ignores
-      #     # them
-
-      #     content="${content//'%'/'%25'}"
-
-      #     content="${content//$'\n'/'%0A'}"
-
-      #     content="${content//$'\r'/'%0D'}"
-
-      #     echo ::set-output name=result::$content
-
+  summary:
+    name: Generate summary
+    needs: builds
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.1.1
+      - uses: cachix/install-nix-action@v12
+      - uses: cachix/cachix-action@v8
+        with:
+          # Name of a cachix cache to push and pull/substitute
+          name:  math-comp
+          extraPullNames: coq
+          # Authentication token for Cachix, needed only for private cache access
+          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       ## does not work because the PR is updated only once
-      # - uses: tzkhan/pr-update-action@v2
-      #   with:
-      #     repo-token: "${{ secrets.GITHUB_TOKEN }}"
-      #     head-branch-regex: 'log-.*'
-      #     body-template: |
-      #       ## Mathematical Components ${{ matrix.mc }} on Coq ${{ matrix.coq }}
+      - id: set-nixenv
+        run: |
+          ./update-readme.sh
+          content=$(cat README.md)
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          echo ::set-output name=result::$content
+      - uses: tzkhan/pr-update-action@v2
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          head-branch-regex: 'log-.*'
+          body-template: |
+            ## Summary
 
-      #       ${{ steps.set-nixenv.outputs.result }}
-      #     body-update-action: 'suffix'
-      #     body-uppercase-base-match: false
+            ${{ steps.set-nixenv.outputs.result }}
+          body-update-action: 'replace'
+          body-uppercase-base-match: false
