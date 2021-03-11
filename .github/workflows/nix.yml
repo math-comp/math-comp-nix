@@ -40,10 +40,7 @@ jobs:
           extraPullNames: coq
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Import Nix Store
-        if: steps.cache-nix.outputs.cache-hit
-        run: nix-store --import < nix-store.nar
-      - name: Building mathcomp-full-shell target
+      - name: Building mathcomp-full-shell target if required
         run: |
           overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\";}"
           storepath=$(nix eval "(\"\${import ./. {override = $overrides;}}\")")
@@ -53,7 +50,7 @@ jobs:
             echo "In cache: $url, doing nothing"
           else
             echo "Not in cache, compiling"
-            nix-build --arg override "$overrides"
+            nix-build --no-out-link --arg override "$overrides"
           fi
 
   summary:
@@ -82,6 +79,9 @@ jobs:
           key: nix-${{ runner.os }}-3-${{ github.sha }}
           restore-keys: |
             nix-${{ runner.os }}-3-
+      - name: Import Nix Store
+        if: steps.cache-nix.outputs.cache-hit
+        run: nix-store --import < nix-store.nar
       - name: Update README.md
         id: set-nixenv
         run: |
@@ -95,11 +95,8 @@ jobs:
         run: nix path-info --all | tee closure.txt
       - name: Export Nix Store
         run: xargs --arg-file=closure.txt nix-store --export > nix-store.nar
-      - uses: tzkhan/pr-update-action@v2
+      - name: Commit README.md
+        uses: EndBug/add-and-commit@v7
         with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          head-branch-regex: 'log-.*'
-          body-template: |
-            ${{ steps.set-nixenv.outputs.result }}
-          body-update-action: 'replace'
-          body-uppercase-base-match: false
+          message: 'Updating README.md'
+          add: 'README.md'

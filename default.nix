@@ -11,7 +11,7 @@ let auto = fetchGit {
 };
 in
 (import auto (
-  { src = ./.;
+  { src = ./dummy;
     config = {
       coq-attribute = if core then "mathcomp-core-shell"
                       else "mathcomp-full-shell";
