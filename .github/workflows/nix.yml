@@ -47,39 +47,42 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.1.1
-      - uses: cachix/install-nix-action@v12
-      - uses: cachix/cachix-action@v8
-        with:
-          # Name of a cachix cache to push and pull/substitute
-          name:  math-comp
-          extraPullNames: coq
-          # Authentication token for Cachix, needed only for private cache access
-          authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+      # - uses: cachix/install-nix-action@v12
+      # - uses: cachix/cachix-action@v8
+      #   with:
+      #     # Name of a cachix cache to push and pull/substitute
+      #     name:  math-comp
+      #     extraPullNames: coq
+      #     # Authentication token for Cachix, needed only for private cache access
+      #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       # building fake mathcomp-fast target
-      - run: nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-      - id: set-nixenv
-        run: >
-          content=$(nix-shell
-          --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-          --run ppNixEnv)
+      - run: echo '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+      # - run: nix-build --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+      # - id: set-nixenv
+      #   run: >
+      #     content=$(nix-shell
+      #     --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
+      #     --run ppNixEnv)
 
-          # Escaping a few characters, otherwise set-output ignores
-          # them
+      #     # Escaping a few characters, otherwise set-output ignores
+      #     # them
 
-          content="${content//'%'/'%25'}"
+      #     content="${content//'%'/'%25'}"
 
-          content="${content//$'\n'/'%0A'}"
+      #     content="${content//$'\n'/'%0A'}"
 
-          content="${content//$'\r'/'%0D'}"
+      #     content="${content//$'\r'/'%0D'}"
 
-          echo ::set-output name=result::$content
-      - uses: tzkhan/pr-update-action@v2
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          head-branch-regex: 'log-.*'
-          body-template: |
-            ## Mathematical Components ${{ matrix.mc }} on Coq ${{ matrix.coq }}
+      #     echo ::set-output name=result::$content
 
-            ${{ steps.set-nixenv.outputs.result }}
-          body-update-action: 'suffix'
-          body-uppercase-base-match: false
+      ## does not work because the PR is updated only once
+      # - uses: tzkhan/pr-update-action@v2
+      #   with:
+      #     repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      #     head-branch-regex: 'log-.*'
+      #     body-template: |
+      #       ## Mathematical Components ${{ matrix.mc }} on Coq ${{ matrix.coq }}
+
+      #       ${{ steps.set-nixenv.outputs.result }}
+      #     body-update-action: 'suffix'
+      #     body-uppercase-base-match: false
