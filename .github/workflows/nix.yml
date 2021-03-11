@@ -42,7 +42,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Building mathcomp-full-shell target
         run: |
-          overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\"}"
+          overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\";}"
           storepath=$(nix eval "(\"\${import ./. {override = $overrides;}}\")")
           hash=$(echo $storepath | sed "s/\"//mg" | xargs basename | cut -d- -f1)
           url=https://math-comp.cachix.org/$hash.narinfo
