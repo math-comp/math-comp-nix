@@ -1,13 +1,14 @@
 { core ? false,
   config ? {}, withEmacs ? false, print-env ? false, do-nothing ? false,
-  update-nixpkgs ? false, ci-matrix ? false, ci-step ? null,
+  update-nixpkgs ? false, ci-matrix ? false, ci-job ? null,
   override ? {}, ocaml-override ? {}, global-override ? {},
-  ci ? (!isNull ci-step), inNixShell ? null
+  ci ? (!isNull ci-job), inNixShell ? null, src ? ./.,
 }@args:
 let auto = fetchGit {
-  url = "https://github.com/coq-community/nix-toolbox.git";
+  url = "https://github.com/coq-community/coq-nix-toolbox.git";
   ref = "master";
-  rev = "b1e5c52bdc1d79b7cd220476ebd9bc552a2331c7";
+# putting a ref here is strongly advised
+  rev = import .nix/coq-nix-toolbox.nix;
 };
 in
 (import auto (
