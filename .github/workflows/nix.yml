@@ -63,18 +63,25 @@ jobs:
           --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
           --run printNixEnv)
 
-          # Escaping a few characters, otherwise set-output ignores them
+          # Escaping a few characters, otherwise set-output ignores
+          # them
+
           content="${content//'%'/'%25'}"
+
           content="${content//$'\n'/'%0A'}"
+
           content="${content//$'\r'/'%0D'}"
 
           echo ::set-output name=result::$content
-      - uses: mshick/add-pr-comment@v1
+      - uses: tzkhan/pr-update-action@v2
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-          message: |
-            \## Mathematical Components ${{ matrix.mc }} on Coq ${{ matrix.coq }}
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+          head-branch-regex: 'log-.*'
+          body-template: |
+            ## Mathematical Components ${{ matrix.mc }} on Coq ${{ matrix.coq }}
 
             ```
             ${{ steps.set-nixenv.outputs.result }}
             ```
+          body-update-action: 'suffix'
+          body-uppercase-base-match: false
