@@ -68,12 +68,12 @@ jobs:
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
 
-          echo ::set-output name=result::content
+          echo ::set-output name=result::$content
       - uses: mshick/add-pr-comment@v1
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           message: |
-            \## coq-${{ matrix.coq }}-mathcomp-${{ matrix.mc }}**
+            \## Mathematical Components ${{ matrix.mc }} on Coq ${{ matrix.coq }}
 
             ```
             ${{ steps.set-nixenv.outputs.result }}
