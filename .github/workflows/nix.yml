@@ -75,11 +75,8 @@ jobs:
         id: set-nixenv
         run: |
           ./update-readme.sh
-          content=$(cat README.md)
-          content="${content//'%'/'%25'}"
-          content="${content//$'\n'/'%0A'}"
-          content="${content//$'\r'/'%0D'}"
-          echo ::set-output name=result::$content
+      - name: Show README.md
+        run: cat README.md
       - name: Commit README.md
         uses: EndBug/add-and-commit@v7
         with:
