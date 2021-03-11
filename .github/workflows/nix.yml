@@ -82,11 +82,8 @@ jobs:
           key: nix-${{ runner.os }}-3-${{ github.sha }}
           restore-keys: |
             nix-${{ runner.os }}-3-
-      - name: Compute Closure
-        run: nix path-info --all | tee closure.txt
-      - name: Export Nix Store
-        run: xargs --arg-file=closure.txt nix-store --export > nix-store.nar
-      - id: set-nixenv
+      - name: Update README.md
+        id: set-nixenv
         run: |
           ./update-readme.sh
           content=$(cat README.md)
@@ -94,7 +91,10 @@ jobs:
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
           echo ::set-output name=result::$content
-
+      - name: Compute Closure
+        run: nix path-info --all | tee closure.txt
+      - name: Export Nix Store
+        run: xargs --arg-file=closure.txt nix-store --export > nix-store.nar
       - uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
