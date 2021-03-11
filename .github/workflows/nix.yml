@@ -61,7 +61,7 @@ jobs:
         run: >
           content=$(nix-shell
           --arg override '{coq = "${{ matrix.coq }}"; mathcomp = "${{ matrix.mc }}";}'
-          --run printNixEnv)
+          --run ppNixEnv)
 
           # Escaping a few characters, otherwise set-output ignores
           # them
@@ -80,8 +80,6 @@ jobs:
           body-template: |
             ## Mathematical Components ${{ matrix.mc }} on Coq ${{ matrix.coq }}
 
-            ```
             ${{ steps.set-nixenv.outputs.result }}
-            ```
           body-update-action: 'suffix'
           body-uppercase-base-match: false
