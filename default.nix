@@ -11,9 +11,10 @@ let auto = fetchGit {
 };
 in
 (import auto (
-  { src = ./dummy;
+  { src = ./shells;
     config = {
       coq-attribute = if core then "mathcomp-core-shell"
                       else "mathcomp-full-shell";
+
     };
   } // removeAttrs args ["core"])).nix-auto
