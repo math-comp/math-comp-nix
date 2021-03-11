@@ -28,6 +28,8 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2.1.1
       - uses: cachix/install-nix-action@v12
         with:
           nix_path: nixpkgs=channel:nixpkgs-unstable
@@ -38,8 +40,6 @@ jobs:
           extraPullNames: coq
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - name: Checkout
-        uses: actions/checkout@v2.1.1
       - name: Building mathcomp-full-shell target if required
         run: |
           overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\";}"
@@ -58,6 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: builds
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2.1.1
       - name: Cache install Nix packages
         uses: rikhuijzer/cache-install@v1.0.7
         with:
@@ -73,8 +75,6 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       ## does not work because the PR is updated only once
-      - name: Checkout
-        uses: actions/checkout@v2.1.1
       - name: Update README.md
         id: set-nixenv
         run: |
