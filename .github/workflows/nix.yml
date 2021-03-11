@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: Setup build matrix
       id: set-matrix
-      run: "echo ::set-output name=matrix::$(./ci-matrix)"
+      run: "echo ::set-output name=matrix::$(./ci-matrix.sh)"
 
   builds:
     name: Build mathcomp and coq combination
