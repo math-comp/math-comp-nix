@@ -71,17 +71,10 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       ## does not work because the PR is updated only once
-      - name: Cache Nix Store
-        uses: actions/cache@v2.1.4
-        id: cache-nix
+      - name: Cache install Nix packages
+        uses: rikhuijzer/cache-install@v1
         with:
-          path: nix-store.nar
-          key: nix-${{ runner.os }}-3-${{ github.sha }}
-          restore-keys: |
-            nix-${{ runner.os }}-3-
-      - name: Import Nix Store
-        if: steps.cache-nix.outputs.cache-hit
-        run: nix-store --import < nix-store.nar
+          key: nix-${{ hashFiles('default.nix') }}
       - name: Update README.md
         id: set-nixenv
         run: |
@@ -91,10 +84,6 @@ jobs:
           content="${content//$'\n'/'%0A'}"
           content="${content//$'\r'/'%0D'}"
           echo ::set-output name=result::$content
-      - name: Compute Closure
-        run: nix path-info --all | tee closure.txt
-      - name: Export Nix Store
-        run: xargs --arg-file=closure.txt nix-store --export > nix-store.nar
       - name: Commit README.md
         uses: EndBug/add-and-commit@v7
         with:
