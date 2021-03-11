@@ -47,6 +47,7 @@ jobs:
 
   summary:
     name: Generate summary
+    runs-on: ubuntu-latest
     needs: builds
     steps:
       - name: Checkout
