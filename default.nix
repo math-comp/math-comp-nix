@@ -1,8 +1,8 @@
 { core ? false,
   config ? {}, withEmacs ? false, print-env ? false, do-nothing ? false,
-  update-nixpkgs ? false, ci-matrix ? false, ci-job ? null,
+  update-nixpkgs ? false, ci-matrix ? false,
   override ? {}, ocaml-override ? {}, global-override ? {},
-  ci ? (!isNull ci-job), inNixShell ? null, src ? ./.,
+  job ? null, bundle ? null, inNixShell ? null, src ? ./.,
 }@args:
 let auto = fetchGit {
   url = "https://github.com/coq-community/coq-nix-toolbox.git";
@@ -14,8 +14,8 @@ in
 (import auto (
   { src = ./shells;
     config = {
-      coq-attribute = if core then "mathcomp-core-shell"
-                      else "mathcomp-full-shell";
+      attribute = if core then "mathcomp-core-shell"
+                  else "mathcomp-full-shell";
 
     };
   } // removeAttrs args ["core"])).nix-auto
