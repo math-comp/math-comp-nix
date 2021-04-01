@@ -1,6 +1,6 @@
 # Nix support, build and caching for mathcomp packages
 
-![Cachix](https://github.com/math-comp/math-comp-nix/workflows/Cachix/badge.svg)
+![Cachix](https://github.com/math-comp/math-comp-nix/workflows/Cachix/badge.svg?branch=v2)
 
 This caches the builds needed to call
 ```
