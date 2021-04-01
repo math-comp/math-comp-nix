@@ -44,25 +44,31 @@ Available packages:
 - coq-8.13.1
 - mathcomp-all-1.12.0
 - mathcomp1.12-abel-1.0.0
+- mathcomp1.12-analysis-0.3.6
 - mathcomp1.12-bigenough-1.0.0
 - mathcomp1.12-finmap-1.5.1
 - mathcomp1.12-real-closed-1.1.2
+- mathcomp1.12-multinomials-1.5.4
 ### Mathematical Components 1.12.0 and Coq 8.12
 Available packages:
 - coq-8.12.2
 - mathcomp-all-1.12.0
 - mathcomp1.12-abel-1.0.0
+- mathcomp1.12-analysis-0.3.6
 - mathcomp1.12-bigenough-1.0.0
 - mathcomp1.12-finmap-1.5.1
 - mathcomp1.12-real-closed-1.1.2
+- mathcomp1.12-multinomials-1.5.4
 ### Mathematical Components 1.12.0 and Coq 8.11
 Available packages:
 - coq-8.11.2
 - mathcomp-all-1.12.0
 - mathcomp1.12-abel-1.0.0
+- mathcomp1.12-analysis-0.3.6
 - mathcomp1.12-bigenough-1.0.0
 - mathcomp1.12-finmap-1.5.1
 - mathcomp1.12-real-closed-1.1.2
+- mathcomp1.12-multinomials-1.5.4
 ### Mathematical Components 1.12.0 and Coq 8.10
 Available packages:
 - coq-8.10.2
@@ -71,11 +77,13 @@ Available packages:
 - mathcomp1.12-bigenough-1.0.0
 - mathcomp1.12-finmap-1.5.1
 - mathcomp1.12-real-closed-1.1.2
+- mathcomp1.12-multinomials-1.5.4
 ### Mathematical Components 1.11.0 and Coq 8.12
 Available packages:
 - coq-8.12.2
 - mathcomp-all-1.11.0
 - mathcomp1.11-abel-1.0.0
+- mathcomp1.11-analysis-0.3.4
 - mathcomp1.11-bigenough-1.0.0
 - mathcomp1.11-finmap-1.5.1
 - mathcomp1.11-real-closed-1.1.1
@@ -85,7 +93,7 @@ Available packages:
 - coq-8.11.2
 - mathcomp-all-1.11.0
 - mathcomp1.11-abel-1.0.0
-- mathcomp1.11-analysis-0.3.1
+- mathcomp1.11-analysis-0.3.4
 - mathcomp1.11-bigenough-1.0.0
 - mathcomp1.11-finmap-1.5.1
 - mathcomp1.11-real-closed-1.1.1
@@ -95,7 +103,7 @@ Available packages:
 - coq-8.10.2
 - mathcomp-all-1.11.0
 - mathcomp1.11-abel-1.0.0
-- mathcomp1.11-analysis-0.3.1
+- mathcomp1.11-analysis-0.3.3
 - mathcomp1.11-bigenough-1.0.0
 - mathcomp1.11-finmap-1.5.1
 - mathcomp1.11-real-closed-1.1.1
