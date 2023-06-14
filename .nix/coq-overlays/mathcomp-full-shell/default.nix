@@ -3,7 +3,10 @@
   mathcomp-abel, version ? null }@args:
 stdenv.mkDerivation {
   name = "mathcomp-full-shell";
-  buildInputs = with builtins; filter (x: !(x.meta.broken or false))
-    (attrValues (removeAttrs args ["stdenv" "version"]));
+  theargs = builtins.trace args args;
+  buildInputs =
+    with builtins; filter (x: !(x.meta.broken or false))
+      (attrValues (removeAttrs theargs ["stdenv" "version"]));
   src = version;
+  meta = {inherit mathcomp;};
 }

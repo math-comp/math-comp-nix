@@ -12,7 +12,7 @@ let auto = fetchGit {
 };
 in
 (import auto (
-  { src = ./shells;
+  { 
     config = {
       attribute = if core then "mathcomp-core-shell"
                   else "mathcomp-full-shell";
