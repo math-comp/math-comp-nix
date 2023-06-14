@@ -12,7 +12,7 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.5
+        uses: actions/checkout@v3.5.3
       - uses: cachix/install-nix-action@v21
         with:
           nix_path: nixpkgs=channel:nixpkgs-unstable
@@ -39,7 +39,7 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Checkout
-        uses: actions/checkout@v3.5
+        uses: actions/checkout@v3.5.3
       - name: Building mathcomp-full-shell target if required
         run: |
           overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\";}"
@@ -70,7 +70,7 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       ## does not work because the PR is updated only once
       - name: Checkout
-        uses: actions/checkout@v3.5
+        uses: actions/checkout@v3.5.3
       - name: Update README.md
         id: set-nixenv
         run: |
