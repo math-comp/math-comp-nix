@@ -43,7 +43,7 @@ jobs:
       - name: Building mathcomp-full-shell target if required
         run: |
           overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\";}"
-          storepath=$(nix eval "(\"\${import ./. {override = $overrides;}}\")")
+          storepath=$(nix eval --impure --expr "(\"\${import ./. {override = $overrides;}}\")")
           hash=$(echo $storepath | sed "s/\"//mg" | xargs basename | cut -d- -f1)
           url=https://math-comp.cachix.org/$hash.narinfo
           if curl --output /dev/null --silent --head --fail "$url"; then
