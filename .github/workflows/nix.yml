@@ -12,8 +12,8 @@ jobs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.1.1
-      - uses: cachix/install-nix-action@v12
+        uses: actions/checkout@v3.5
+      - uses: cachix/install-nix-action@v21
         with:
           nix_path: nixpkgs=channel:nixpkgs-unstable
       - name: Setup build matrix
@@ -28,10 +28,10 @@ jobs:
       fail-fast: false
       matrix: ${{fromJson(needs.setup.outputs.matrix)}}
     steps:
-      - uses: cachix/install-nix-action@v12
+      - uses: cachix/install-nix-action@v21
         with:
           nix_path: nixpkgs=channel:nixpkgs-unstable
-      - uses: cachix/cachix-action@v8
+      - uses: cachix/cachix-action@v12
         with:
           # Name of a cachix cache to push and pull/substitute
           name:  math-comp
@@ -39,7 +39,7 @@ jobs:
           # Authentication token for Cachix, needed only for private cache access
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       - name: Checkout
-        uses: actions/checkout@v2.1.1
+        uses: actions/checkout@v3.5
       - name: Building mathcomp-full-shell target if required
         run: |
           overrides="{coq = \"${{ matrix.coq }}\"; mathcomp = \"${{ matrix.mc }}\";}"
@@ -58,10 +58,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: builds
     steps:
-      - uses: cachix/install-nix-action@v12
+      - uses: cachix/install-nix-action@v21
         with:
           nix_path: nixpkgs=channel:nixpkgs-unstable
-      - uses: cachix/cachix-action@v8
+      - uses: cachix/cachix-action@v12
         with:
           # Name of a cachix cache to push and pull/substitute
           name:  math-comp
@@ -70,13 +70,13 @@ jobs:
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
       ## does not work because the PR is updated only once
       - name: Checkout
-        uses: actions/checkout@v2.1.1
+        uses: actions/checkout@v3.5
       - name: Update README.md
         id: set-nixenv
         run: |
           ./update-readme.sh
       - name: Commit README.md
-        uses: EndBug/add-and-commit@v7
+        uses: EndBug/add-and-commit@v9
         with:
           message: 'Updating README.md'
           add: 'README.md'
