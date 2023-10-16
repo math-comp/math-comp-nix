@@ -46,6 +46,7 @@
     ## In some cases, light overrides are not available/enough
     ## in which case you can use either
     # coqPackages.<coq-pkg>.overrideAttrs = o: <overrides>;
+    coqPackages.mathcomp.override.version = "2.0.0";
     ## or a "long" overlay to put in `.nix/coq-overlays
     ## you may use `nix-shell --run fetchOverlay <coq-pkg>`
     ## to automatically retrieve the one from nixpkgs
