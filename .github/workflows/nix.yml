@@ -18,7 +18,7 @@ jobs:
           nix_path: nixpkgs=channel:nixpkgs-unstable
       - name: Setup build matrix
         id: set-matrix
-        run: "echo ::set-output name=matrix::$(./ci-matrix.sh)"
+        run: echo "matrix=$(./ci-matrix.sh)" >> $GITHUB_OUTPUT
 
   builds:
     name: Build mathcomp and coq combination
