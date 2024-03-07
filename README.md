@@ -19,7 +19,7 @@ See [Mathcomp on nix Wiki page](https://github.com/math-comp/math-comp/wiki/Usin
 
 Here is a synthesis of all available mathcomp packages.
 
-If a mathcomp-coq combination is missing, please add it to the `mc-coq-set` attribute in the file [`matrix/default.nix`](https://github.com/math-comp/math-comp-nix/blob/v2/mstrix/default.nix).
+If a mathcomp-coq combination is missing, please add it to the `mc-coq-set` attribute in the file [`matrix/default.nix`](https://github.com/math-comp/math-comp-nix/blob/v2/matrix/default.nix).
 
 If some mathcomp extra package is missing, there might be three reasons:
 1. The (update of the) package has not been pushed on [NixOS/nixpkgs](https://github.com/NixOS/nixpkgs).
